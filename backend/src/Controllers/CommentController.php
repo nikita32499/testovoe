@@ -2,7 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Models\Comment;
+
+use App\Service\CaptchaService;
+use App\Service\CommentService;
+
+
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -20,10 +24,28 @@ class CommentController
                 ->withStatus(400);
         }
 
+        if (empty($data["captcha"]['id']) || empty($data["captcha"]['text'])) {
+            $response->getBody()->write(json_encode([
+                'error' => 'Нужно решить капчу'
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(400);
+        }
 
-        $comment = new Comment($data["name"],$data["content"]);
-         
-        Comment::save($comment);
+
+        $success = CaptchaService::validate($data["captcha"]["id"],$data["captcha"]["text"]);
+        if($success){ 
+            $response->getBody()->write(json_encode([
+                'error' => 'Не верная капча!!!'
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(400);
+        }
+
+
+        $comment = CommentService::add($data["name"],$data["content"]);
 
 
 
@@ -38,15 +60,15 @@ class CommentController
         $data = json_decode($request->getBody(), true);
 
 
-
-        Comment::delete($data["id"]);
+        CommentService::delete($data["id"]);
+        
         return $response->withStatus(200);
     }
 
 
 
     public static function getAll($request, $response) {
-        $comments = Comment::all();
+        $comments = CommentService::getAll();
         
         
         $response->getBody()->write(json_encode($comments));
