@@ -22,7 +22,7 @@ class CommentController
 
 
         $comment = new Comment($data["name"],$data["content"]);
-        // var_dump($comment);  
+         
         Comment::save($comment);
 
 

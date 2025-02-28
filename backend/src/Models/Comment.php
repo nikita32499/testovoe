@@ -43,10 +43,10 @@ class Comment
 
     
 
-    // Геттеры и сеттеры
+     
     
 
-    // Статические методы для работы с БД
+     
     public static function save($comment) {
         global $entityManager;
         $entityManager->persist($comment);
