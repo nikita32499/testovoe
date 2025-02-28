@@ -1,14 +1,15 @@
 <?php
 
+
+
 use Slim\Routing\RouteCollectorProxy;
-
-
+use App\Controllers\CommentController;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 $app->group('/comments', function (RouteCollectorProxy $group) {
-    $group->get('/getAll', 'CommentController:getAll');
-    $group->post('/{imageId}', 'CommentController:create');
+    $group->get('/getAll', function (Request $request, Response $response) {
+        return CommentController::getAll($request, $response);
+        // return $response;
+    });
 });
-
-// $app->post('/comments', [CommentController::class, 'addComment']);
-
-// $app->delete('/comments/{id}', [CommentController::class, 'deleteComment']); 

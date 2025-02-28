@@ -1,5 +1,4 @@
-
-
+version: '3.8'
 
 services:
   backend:
@@ -7,10 +6,36 @@ services:
     build:
       context: ./backend
     ports:
-      - "8080:80"
+      - "8080:8080"
     restart: always
+    depends_on:
+      - db
     develop:
       watch:
         - path: backend
           action: sync
           target: /var/www/html
+    networks:
+      - app-network
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: sdgfsdgs3gfIHOPUHiUGYIGgg
+      MYSQL_DATABASE: my_database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
