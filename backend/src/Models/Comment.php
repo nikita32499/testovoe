@@ -10,56 +10,41 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Comment
 {
+
+
+    function __construct($name,$content) {
+        $this->content = $content;
+        $this->name = $name;
+        $this->createdAt = time();
+    }
+
+    
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    public $id;
 
     /**
      * @ORM\Column(type="string")
      */
-    private $name;
+    public $name;
 
     /**
      * @ORM\Column(type="text")
      */
-    private $content;
+    public $content;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $createdAt;
+    public $createdAt;
 
-    public function __construct() {
-        $this->createdAt = time();
-    }
+    
 
     // Геттеры и сеттеры
-    public function getId() {
-        return $this->id;
-    }
-
-    public function getName() {
-        return $this->name;
-    }
-
-    public function setName($name) {
-        $this->name = $name;
-    }
-
-    public function getContent() {
-        return $this->content;
-    }
-
-    public function setContent($content) {
-        $this->content = $content;
-    }
-
-    public function getCreatedAt() {
-        return $this->createdAt;
-    }
+    
 
     // Статические методы для работы с БД
     public static function save($comment) {

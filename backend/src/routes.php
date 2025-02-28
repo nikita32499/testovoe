@@ -12,4 +12,15 @@ $app->group('/comments', function (RouteCollectorProxy $group) {
         return CommentController::getAll($request, $response);
         // return $response;
     });
+
+    $group->post('/add', function (Request $request, Response $response) {
+        return CommentController::add($request, $response);
+        // return $response;
+    });
+
+
+    $group->delete('/', function (Request $request, Response $response) {
+        return CommentController::delete($request, $response);
+        // return $response;
+    });
 });

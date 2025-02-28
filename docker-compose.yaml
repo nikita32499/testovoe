@@ -13,7 +13,7 @@ services:
     develop:
       watch:
         - path: backend
-          action: sync
+          action: sync+restart
           target: /var/www/html
     networks:
       - app-network

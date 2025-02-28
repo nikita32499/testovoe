@@ -5,7 +5,7 @@ require '../vendor/autoload.php';
 use Slim\Factory\AppFactory;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
-
+use Doctrine\ORM\Tools\SchemaTool;
 // Инициализация Doctrine
 $config = Setup::createAnnotationMetadataConfiguration(
     [__DIR__ . '/../src/models'],
@@ -26,6 +26,17 @@ $conn = [
 
 $entityManager = EntityManager::create($conn, $config);
 
+$tool = new SchemaTool($entityManager);
+$classes = array(
+    $entityManager->getClassMetadata(\App\Models\Comment::class)
+);
+
+// Создаем схему, если таблицы не существуют
+try {
+    $tool->createSchema($classes);
+} catch (\Exception $e) {
+    // Таблицы уже существуют, пропускаем создание
+}
 // Инициализация Slim
 $app = AppFactory::create();
 

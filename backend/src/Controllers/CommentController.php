@@ -10,47 +10,49 @@ class CommentController
 {
     public static function add($request, $response) {
         $data = json_decode($request->getBody(), true);
-        $comment = new Comment();
-        $comment->setName($data['name']);
-        $comment->setContent($data['content']);
-        Comment::save($comment);
-        
-        return $response->withStatus(201);
-    }
 
-    public static function delete($request, $response, $args) {
-        $id = $args['id'];
-        Comment::delete($id);
-        return $response->withStatus(204);
-    }
-
-    public static function get($request, $response, $args) {
-        $id = $args['id'];
-        $comment = Comment::find($id);
-        if ($comment) {
-            return $response->withJson([
-                'id' => $comment->getId(),
-                'name' => $comment->getName(),
-                'content' => $comment->getContent(),
-                'createdAt' => $comment->getCreatedAt()
-            ], 200);
+        if (empty($data['name']) || empty($data['content'])) {
+            $response->getBody()->write(json_encode([
+                'error' => 'Не указано имя или тело сообщения'
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(400);
         }
-        return $response->withStatus(404);
+
+
+        $comment = new Comment($data["name"],$data["content"]);
+        // var_dump($comment);  
+        Comment::save($comment);
+
+
+
+        $response->getBody()->write(json_encode($comment));
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(201);
+
     }
+
+    public static function delete($request, $response) {
+        $data = json_decode($request->getBody(), true);
+
+
+
+        Comment::delete($data["id"]);
+        return $response->withStatus(200);
+    }
+
+
 
     public static function getAll($request, $response) {
         $comments = Comment::all();
-        $result = array_map(function($comment) {
-            return [
-                'id' => $comment->getId(),
-                'name' => $comment->getName(),
-                'content' => $comment->getContent(),
-                'createdAt' => $comment->getCreatedAt()
-            ];
-        }, $comments);
         
-        return $response->withJson($result, 200);
+        
+        $response->getBody()->write(json_encode($comments));
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
 
-        // return 100;
     }
 } 
